@@ -1,5 +1,6 @@
 
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xml="http://www.w3.org/XML/1998/namespace"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:functx="http://www.functx.com">
     <xsl:output method="text"/>
     <xsl:variable name="className" select="/dependentObject/@class"/>
@@ -22,9 +23,9 @@ public class </xsl:text>
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-		</xsl:text>
-        <xsl:apply-templates mode="generateField" select="property"/>
-        <xsl:text>
+	</xsl:text>
+    <xsl:apply-templates mode="generateField" select="property"/>
+    <xsl:text>
      /**
      * Constructor
      */
@@ -33,37 +34,37 @@ public class </xsl:text>
 	    
     public </xsl:text>
         <xsl:value-of select="$className"/>(<xsl:apply-templates mode="generateConstructorParam" select="property"/>
-        <xsl:text>) {
-	  </xsl:text><xsl:apply-templates mode="generateInitializers" select="property"/>
-        }
-        <xsl:apply-templates mode="generateGetterSetter" select="property"/>
-        }</xsl:template><!--
+        <xsl:text>) {</xsl:text>
+        <xsl:apply-templates mode="generateInitializers" select="property"/>
+     }
+     <xsl:apply-templates mode="generateGetterSetter" select="property"/>
+}</xsl:template><!--
     *****************************************************************
     ** Generate a private field declaration.
     **************************************************************-->
     <xsl:template match="property" mode="generateField">
-        private <xsl:value-of select="@type"/>
+    private <xsl:value-of select="@type"/>
         <xsl:text> </xsl:text>
         <xsl:value-of select="@name"/>;</xsl:template><!--
     *****************************************************************
     ** Generate a "get" method for a property.
     **************************************************************-->
     <xsl:template match="property" mode="generateGetterSetter">
-        public <xsl:value-of select="@type"/>
+    public <xsl:value-of select="@type"/>
         <xsl:text> get</xsl:text>
-        <xsl:value-of select="functx:uppercase-first(@name)"/>( ) {
+        <xsl:value-of select="functx:uppercase-first(@name)"/>() {
         return this.<xsl:value-of select="@name"/>;
-        }
-        public void set<xsl:value-of select="functx:uppercase-first(@name)"/><xsl:text>(</xsl:text><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>) {
+    }
+    public void set<xsl:value-of select="functx:uppercase-first(@name)"/><xsl:text>(</xsl:text><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>) {
         this.<xsl:value-of select="@name"/> = <xsl:value-of select="@name"/>;
-        }
+    }
     </xsl:template>
     <!--
     *****************************************************************
     ** Generate one of the constructor parameters.
     **************************************************************-->
     <xsl:template match="property" mode="generateConstructorParam">
-        <xsl:text xml:space="preserve" xmlns:xml="http://www.w3.org/XML/1998/namespace"></xsl:text>
+        <xsl:text xml:space="preserve"></xsl:text>
         <xsl:value-of select="@type"/>
         <xsl:text> </xsl:text>
         <xsl:value-of select="@name"/>
@@ -73,7 +74,7 @@ public class </xsl:text>
     ** Generate the initialization code inside of the constructor.
     **************************************************************-->
     <xsl:template match="property" mode="generateInitializers">
-        <xsl:text xml:space="preserve" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+        <xsl:text xml:space="preserve">
 		this.</xsl:text>
         <xsl:value-of select="@name"/>
         <xsl:text> = </xsl:text>

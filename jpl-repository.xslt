@@ -1,6 +1,7 @@
 
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:functx="http://www.functx.com">
+    xmlns:xml="http://www.w3.org/XML/1998/namespace"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:functx="http://www.functx.com">
 	<xsl:output method="text"/>
 	<xsl:variable name="className" select="/dependentObject/@class"/>
   <!--

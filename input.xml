@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dependentObject class="Address">
+	<property name="street" type="String"/>
+	<property name="city" type="String"/>
+	<property name="state" type="String"/>
+	<property name="zip" type="String"/>
+</dependentObject>

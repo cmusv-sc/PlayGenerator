@@ -3,13 +3,13 @@
     xmlns:xml="http://www.w3.org/XML/1998/namespace"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:functx="http://www.functx.com">
     <xsl:output method="text"/>
-    <xsl:variable name="className" select="/dependentObject/@class"/>
+    <xsl:variable name="className" select="/entity/@class"/>
     <!--
     ********************************************************************
-    ** Generate the class skeleton. Other templates will generate
-    ** portions of the class.
+    ** Generate the model skeleton. 
+    ** Foreign keys are not currently supported and need to be manually added  
     *****************************************************************-->
-    <xsl:template match="/dependentObject">
+    <xsl:template match="/entity">
         <xsl:text>package models;
 
 import java.util.Date;
@@ -43,6 +43,8 @@ public class </xsl:text>
     ** Generate a private field declaration.
     **************************************************************-->
     <xsl:template match="property" mode="generateField">
+    <xsl:if test="@type='Date'"><xsl:text> 
+    </xsl:text>@Temporal(TemporalType.TIMESTAMP)</xsl:if>
     private <xsl:value-of select="@type"/>
         <xsl:text> </xsl:text>
         <xsl:value-of select="@name"/>;</xsl:template><!--

@@ -3,16 +3,15 @@
     xmlns:xml="http://www.w3.org/XML/1998/namespace"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:functx="http://www.functx.com">
     <xsl:output method="text"/>
-    <xsl:variable name="className" select="/dependentObject/@class"/>
+    <xsl:variable name="className" select="/entity/@class"/>
     <xsl:variable name="repositoryName" select="concat(functx:lowercase-first($className),'Repository')"/>
     <xsl:variable name="varName" select="functx:lowercase-first($className)"/>
     <!--
     ********************************************************************
-    ** Generate the class skeleton. Other templates will generate
-    ** portions of the class.
+    ** Generate the controller skeleton
     *****************************************************************-->
-    <xsl:template match="/dependentObject">
-        <xsl:text>package controller;
+    <xsl:template match="/entity">
+        <xsl:text>package controllers;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -75,7 +74,7 @@ public class </xsl:text>
 			return notFound("</xsl:text><xsl:value-of select="$className"/><xsl:text> not found with id: " + id);
 		}
 
-		userRepository.delete(</xsl:text><xsl:value-of select="$varName"/><xsl:text>);
+		</xsl:text><xsl:value-of select="$repositoryName"/><xsl:text>.delete(</xsl:text><xsl:value-of select="$varName"/><xsl:text>);
 		System.out.println("</xsl:text><xsl:value-of select="$className"/><xsl:text> is deleted: " + id);
 		return ok("</xsl:text><xsl:value-of select="$className"/><xsl:text> is deleted: " + id);
 	}
@@ -101,20 +100,59 @@ public class </xsl:text>
 			return badRequest("</xsl:text><xsl:value-of select="$className"/><xsl:text> not updated");
 		}
 	}
+
+	public Result get</xsl:text><xsl:value-of select="$className"/><xsl:text>(Long id, String format) {
+		if (id == null) {
+			System.out.println("</xsl:text><xsl:value-of select="$className"/><xsl:text> id is null or empty!");
+			return badRequest("</xsl:text><xsl:value-of select="$className"/><xsl:text> id is null or empty!");
+		}
+
+		</xsl:text><xsl:value-of select="$className"/><xsl:text> </xsl:text><xsl:value-of select="$varName"/><xsl:text> = </xsl:text><xsl:value-of select="$repositoryName"/><xsl:text>.findOne(id);
+
+		if (</xsl:text><xsl:value-of select="$varName"/><xsl:text> == null) {
+			System.out.println("</xsl:text><xsl:value-of select="$className"/><xsl:text> not found with with id: " + id);
+			return notFound("</xsl:text><xsl:value-of select="$className"/><xsl:text> not found with with id: " + id);
+		}
+		String result = new String();
+		if (format.equals("json")) {
+			result = new Gson().toJson(</xsl:text><xsl:value-of select="$varName"/><xsl:text>);
+		}
+
+		return ok(result);
+	}
+    
+     public Result getAll</xsl:text><xsl:value-of select="$className"/><xsl:text>(String format) {
+    	try {
+    		Iterable&lt;</xsl:text><xsl:value-of select="$className"/><xsl:text>&gt; </xsl:text><xsl:value-of select="$varName"/><xsl:text> =  </xsl:text><xsl:value-of select="$repositoryName"/><xsl:text>.findAll();
+    		String result = new String();
+    		result = new Gson().toJson(</xsl:text><xsl:value-of select="$varName"/><xsl:text>);
+    		return ok(result);
+    	} catch (Exception e) {
+    		return badRequest("</xsl:text><xsl:value-of select="$className"/><xsl:text> not found");
+    	}
+    }
             
-            </xsl:text>
-        }</xsl:template><!--
+}</xsl:text>
+    </xsl:template><!--
     *****************************************************************
     ** Generate a deserialization from json
     **************************************************************-->
     <xsl:template match="property" mode="deserialize">
-        <xsl:value-of select="@type"/>
+        <xsl:value-of select="if (@type='Date') then 'long' else @type"/>
         <xsl:text> </xsl:text>
+        <xsl:value-of select="@name"/><xsl:if test="@type='Date'">Long</xsl:if>
+        <xsl:text> = json.path("</xsl:text>
         <xsl:value-of select="@name"/>
-        <xsl:text> = json.findPath("</xsl:text>
-        <xsl:value-of select="@name"/>
-        <xsl:text>").asText();
+        <xsl:text>").as</xsl:text>
+        <xsl:choose>
+            <xsl:when test="@type = 'String'">Text</xsl:when>
+            <xsl:when test="@type = 'int'">Int</xsl:when>
+            <xsl:when test="@type = 'long' or @type = 'Date'">Long</xsl:when>
+        </xsl:choose>            
+        <xsl:text>();
         </xsl:text>
+        <xsl:if test="@type='Date'">Date <xsl:value-of select="@name"/> = new Date(<xsl:value-of select="@name"/>Long);
+        </xsl:if>
         </xsl:template><!--
     *****************************************************************
     ** Generate a "get" method for a property.
@@ -159,7 +197,7 @@ public class </xsl:text>
     </xsl:template>
     <!--
     *****************************************************************
-    ** Generate the get by ID using repository line
+    ** Generate the "get by ID from repository" line
     **************************************************************-->
     <xsl:template name="getInstanceFromRepository">
         <xsl:value-of select="$className"/><xsl:text> </xsl:text><xsl:value-of select="$varName"/><xsl:text> = </xsl:text><xsl:value-of select="$repositoryName"/>.findOne(id);

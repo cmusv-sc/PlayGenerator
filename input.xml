@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dependentObject class="Address">
-	<property name="street" type="String"/>
-	<property name="city" type="String"/>
-	<property name="state" type="String"/>
-	<property name="zip" type="String"/>
-</dependentObject>
+<entity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="input-schema.xsd" class="BugReport">
+	<property name="title" type="String"/>
+	<property name="email" type="String"/>
+	<property name="name" type="String"/>
+	<property name="description" type="String"/>
+	<property name="organization" type="String"/>
+	<property name="solved" type="int"/>
+	<property name="creationDate" type="Date"/>
+	<property name="updateDate" type="Date"/>	
+</entity>

@@ -3,16 +3,18 @@
     xmlns:xml="http://www.w3.org/XML/1998/namespace"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:functx="http://www.functx.com">
 	<xsl:output method="text"/>
-	<xsl:variable name="className" select="/dependentObject/@class"/>
+	<xsl:variable name="className" select="/entity/@class"/>
   <!--
     ********************************************************************
-    ** Generate the class skeleton. Other templates will generate
-    ** portions of the class.
+    ** Generate the repository
+    ** Only advanced business logic queries need to be added manually
     *****************************************************************-->
-	<xsl:template match="/dependentObject">
+	<xsl:template match="/entity">
 		<xsl:text>package models;
 
 import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
